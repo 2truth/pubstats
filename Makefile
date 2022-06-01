@@ -1,4 +1,4 @@
-.PHONY=process topauthors cliques fresh all deploy
+.PHONY=process topauthors cliques fresh all deploy clean
 
 process: topauthors cliques
 
@@ -28,3 +28,6 @@ deploy:
 		gzip -f -9 -k $$i ; \
 	done
 	unison -batch www/ ssh://ghul.albtraum.org/pubstats/
+
+clean:
+	rm -rf ./pickle ./dblp.dtd ./dblp.xml.gz ./csrankings.csv 

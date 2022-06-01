@@ -139,14 +139,19 @@ def parse_dblp(dblp_file = './dblp.xml.gz'):
                 if author_affiliation == '' and elem.text != None:
                     author_affiliation = elem.text
             elif elem.tag == 'inproceedings' or elem.tag == 'article':
-                for area in CONFERENCES:
-                    if venue in CONFERENCES[area] or (venue in CONFERENCES_NUMBER[area] and number in CONFERENCES_NUMBER[area][venue]):
-                        if get_nr_pages(pages, title, venue, year) >= MIN_PAPER_PAGES:
+                # for area in CONFERENCES:
+                    # if venue in CONFERENCES[area] or (venue in CONFERENCES_NUMBER[area] and number in CONFERENCES_NUMBER[area][venue]):
+                #cyy
+                for area in ['sys_sec']:
+                    if venue in CONFERENCES[area] or venue in CONFERENCES_NUMBER[area]:
+                        page_3 = get_nr_pages(pages, title, venue, year)
+                        if  page_3 >= MIN_PAPER_PAGES:
                             selected_pub += 1
-                            pubs[area].append(Pub(venue, title, authors, year))
+                            pubs[area].append(Pub(authors, title, venue, year))
                             for author in authors:
                                 if not author in all_authors:
                                     all_authors.add(author)
+
                 total_pub += 1
                 authors = []
                 number = ''
@@ -205,6 +210,7 @@ def remove_aliases(confs, aliases):
 if __name__ == '__main__':
     # Parse security conferences
     pubs, affiliations, aliases, total_pub, selected_pub, total_affiliations = parse_dblp()
+    
     print('Selected a grand total of {} out of {} publications'.format(selected_pub, total_pub))
     print('Selected a grand total of {} out of {} authors (with affiliations)'.format(len(affiliations), total_affiliations))
 

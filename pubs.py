@@ -35,7 +35,7 @@ CONFERENCES = {
 CONFERENCES_NUMBER = {
     'sys_arch': {},
     'sys_net': {},
-    'sys_sec': {},
+    'sys_sec': {'IEEE Trans. Dependable Secur. Comput.', 'IEEE Trans. Inf. Forensics Secur.'},
     'sys_db': {},
     'sys_design': {},
     'sys_embed': {},
@@ -62,6 +62,15 @@ CONFERENCES_SHORT = {
     'sys_se': ['FSE', 'ICSE', 'ASE', 'ISSTA'],
 }
 
+PUB_SHORT = {
+    'CCS': 'ACM CCS', 
+    'ACM Conference on Computer and Communications Security': 'ACM CCS', 
+    'USENIX Security Symposium': 'USENIX Security', 
+    'IEEE Symposium on Security and Privacy': 'IEEE S&P',
+    'IEEE Trans. Dependable Secur. Comput.': 'TDSC',
+    'IEEE Trans. Inf. Forensics Secur.': 'TIFS'
+}
+
 AREA_TITLES = {
     'sys_arch': 'Systems: Architecture',
     'sys_net': 'Systems: Networks',
@@ -79,11 +88,11 @@ AREA_TITLES = {
 }
 
 class Pub():
-    def __init__(self, venue, title, authors, year):
-        self.venue = venue
-        self.title = title
-        self.authors = authors
-        self.year = year
+    def __init__(self, authors_, title_, venue_, year_):
+        self.venue = venue_
+        self.title = title_
+        self.authors = authors_
+        self.year = year_
         #print('{} {} {} {}\n'.format(authors, year, venue, title))
 
 class Author():
@@ -112,6 +121,42 @@ class Author():
 
     def get_total(self):
         return sum(self.years.values())
+
+class CustomedAuthor():
+    def __init__(self, name_:str, aux_data_, bottom_year_=2017):
+        self.name = name_
+        self.pubs = []
+        self.pubs_set = set()
+        self.total = 0
+        self.years_num = {} # { 'year1': num, ... }
+        self.venues_num = {} # { 'venue1': num, ... }
+        self.year_filter_venues_num = {} # {'venue1': num }
+        self.university, self.homepage, self.google_scholar = aux_data_
+        self.filter_year = bottom_year_
+    
+    def SetBottomYear(year_:int):
+        self.filter_year = year_
+
+    def AddPublication(self, authors_:list, title_:str, venue_:str, year_:str):
+        if title_ in self.pubs_set: return
+        self.pubs_set.add(title_)
+
+        self.total += 1
+        
+        if year_ not in self.years_num:
+            self.years_num[year_] = 0
+        self.years_num[year_] += 1
+        
+        self.pubs.append(Pub(authors_, title_, venue_, year_))
+
+        if venue_ not in self.venues_num:
+            self.venues_num[venue_] = 0
+            self.year_filter_venues_num[venue_] = 0
+        self.venues_num[venue_] += 1
+        if year_ >= self.filter_year:
+            self.year_filter_venues_num[venue_] += 1
+
+
 
 if __name__ == '__main__':
     print('Nothing to see here, move along...')
